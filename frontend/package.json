@@ -1,0 +1,60 @@
+{
+  "name": "testing",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "axios": "^0.21.1",
+    "bootstrap": "^5.0.1",
+    "d3-array": "^2.11.0",
+    "d3-dispatch": "^3.0.1",
+    "d3-fetch": "^2.0.0",
+    "d3-scale": "^3.2.3",
+    "d3-selection": "^2.0.0",
+    "d3-shape": "^2.0.0",
+    "d3-zoom": "^3.0.0",
+    "deck.gl": "^8.4.17",
+    "fs": "0.0.1-security",
+    "lodash": "^4.17.21",
+    "mapbox-gl": "^2.2.0",
+    "mathjs": "^9.3.0",
+    "plotly.js": "^1.58.4",
+    "rc-slider": "^9.7.2",
+    "react": "^17.0.2",
+    "react-bootstrap": "^1.6.1",
+    "react-bootstrap-range-slider": "^2.0.2",
+    "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
+    "react-map-gl": "^6.1.16",
+    "react-modal": "^3.14.4",
+    "react-plotly.js": "^2.5.1",
+    "react-scripts": "4.0.2",
+    "web-vitals": "^1.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

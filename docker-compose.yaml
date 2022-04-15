@@ -1,0 +1,26 @@
+version: '3.6'
+
+services:
+  api:
+    build: .
+    depends_on:
+      - db
+    networks:
+      - default
+    ports:
+      - 5000:5000
+    volumes:
+      - ./app:/usr/src/app/app
+    restart: always
+
+  db:
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    image: postgres:latest
+    networks:
+      - default
+    ports:
+      - 5434:5432
+    restart: always
