@@ -191,15 +191,13 @@ export default function App() {
 						<div className='d-flex justify-content-around align-items-center' style={{ width: '80%', marginLeft: '50px', marginRight: '50px' }}>
 							<div>
 								<div style={{ color: 'white' }}>0-1</div>
-								<MetricsTag >
+								<MetricsTag tag={1}>
 									<input type="checkbox" checked={z2one} onChange={() => setZ2one(!z2one)} />
 								</MetricsTag>
 							</div>
 							<div>
 								<div style={{ color: 'white' }}>1-2</div>
-								<MetricsTag >
-									<input type="checkbox" checked={one2two} onChange={() => setOne2two(!one2two)} />
-								</MetricsTag>
+								<input type="checkbox" checked={one2two} onChange={() => setOne2two(!one2two)} />
 							</div>
 							<div>
 								<div style={{ color: 'white' }}>2-3</div>

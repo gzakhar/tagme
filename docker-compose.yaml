@@ -10,7 +10,7 @@ services:
     ports:
       - 5000:5000
     volumes:
-      - ./app:/usr/src/app/app
+      - ./backend:/usr/src/backend/
     restart: always
 
   db:
