@@ -12,7 +12,7 @@ function Tag(props) {
 
     const [tags, setTags] = useState({})
     const [newTag, setNewTag] = useState("")
-
+    let originalTags = []
 
     useEffect(async () => {
         getTags()
@@ -29,17 +29,36 @@ function Tag(props) {
 
         let res = await axios.get(`http://localhost:5000/tag`)
         let tagsDict = {}
-        res.data["tags"].forEach(tag => tagsDict[tag['description']] = false)
+        res.data["tags"].forEach(tag => tagsDict[tag['id']] = { 'description': tag['description'], 'checked': false })
+
+        res = await axios.get(`http://localhost:5000/documentation/${props.uc_id}/tag`)
+
+        for (let tag of res.data['tags']) {
+            tagsDict[tag['tag_id']]['checked'] = true
+        }
+
+        originalTags = res.data['tags'].map((tag) => tag['tag_id'])
+
         setTags(tagsDict)
     }
 
 
-    function handleCheckTag(name) {
+    function handleCheckTag(id) {
 
-        let tagsDict = {...tags}
-        tagsDict[name] = !tagsDict[name]
+        let tagsDict = { ...tags }
+
+        if (tagsDict[id]['checked']) {
+            props.tagUpdates = props.tagUpdates.filter((val) => val != id)
+        } else {
+            props.tagUpdates.append(id)
+        }
+
+        tagsDict[id]['checked'] = !tagsDict[id]['checked']
+        
+        props.tagUpdates = tagsDict
         setTags(tagsDict)
     }
+
 
 
     return (
@@ -47,10 +66,11 @@ function Tag(props) {
 
             <form>
                 {
-                    Object.keys(tags).map((tag, indx) => (<span style={{ border: "red 2px solid", marginRight: "5px", borderRadius: "5px", key: indx }}>
-                        <input type="checkbox" checked={tags[tag] ? 'checked' : ''} onChange={() => handleCheckTag(tag)} />
-                        <p style={{ display: "inline-block" }}>{tag}</p>
-                    </span>))
+                    Object.keys(tags).map((tag, indx) => (
+                        <span style={{ border: "red 2px solid", marginRight: "5px", borderRadius: "5px", key: indx }}>
+                            <input type="checkbox" checked={tags[tag]['checked'] ? 'checked' : ''} onChange={() => handleCheckTag(tag)} />
+                            <p style={{ display: "inline-block" }}>{tags[tag]['description']}</p>
+                        </span>))
                 }
             </form>
             < form onSubmit={(e) => {
@@ -70,6 +90,7 @@ function MetricsTag(props) {
 
     const [modalOpen, setModalOpen] = useState(false)
     const [documentation, setDocumentation] = useState("")
+    let tagUpdates = {}
 
     let isAnotated = props.tag != null;
     let tag;
@@ -142,12 +163,8 @@ function MetricsTag(props) {
                                         height: "200px"
                                     }} onChange={(e) => setDocumentation(e.target.value)} value={documentation} />
                                     <h4>Tags</h4>
-                                    <Tag uc_id={tag} />
+                                    <Tag uc_id={tag} tagUpdates={tagUpdates}/>
                                 </div>)
-
-
-
-
                             }
                             <div style={{ margin: "10px" }} />
                             {isAnotated && <button onClick={() => handleSubmitModal()}>Submit</button>}

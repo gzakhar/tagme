@@ -143,4 +143,13 @@ class Tag(Base):
     description: str = field(default=None, metadata={"sa": Column(String, unique=True)})
 
 
+@mapper_registry.mapped
+@dataclass
+class UserControlTag(Base):
+    __tablename__ = "user_control_tag"
+
+    user_control_id: int = field(default=None, metadata={"sa": Column(Integer, primary_key=True)})
+    tag_id: int = field(default=None, metadata={"sa": Column(Integer, primary_key=True)})
+
+
 metadata.create_all(engine)
