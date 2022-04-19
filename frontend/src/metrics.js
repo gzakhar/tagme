@@ -70,6 +70,7 @@ function MetricsTag(props) {
 
     const [modalOpen, setModalOpen] = useState(false)
     const [documentation, setDocumentation] = useState("")
+    const [location, setLocation] = useState("")
 
     let isAnotated = props.tag != null;
     let tag;
@@ -96,20 +97,24 @@ function MetricsTag(props) {
     useEffect(async () => {
 
         let res = await axios.get(`http://localhost:5000/documentation/${tag}`)
+        console.log("res is:", res)
         setDocumentation(res.data["description"])
+        setLocation(res.data["location"])
 
     }, [modalOpen])
 
 
     function handleSubmitModal() {
 
-        axios.post(`http://localhost:5000/documentation/${tag}`, { description: documentation }, { headers: { "Content-Type": "application/json" } })
+        axios.post(`http://localhost:5000/documentation/${tag}`, { description: documentation, location: location }, { headers: { "Content-Type": "application/json" } })
+        
         handleCloseModal()
     }
 
     function handleCloseModal() {
         setDocumentation("")
         setModalOpen("")
+        setLocation("")
     }
 
 
@@ -141,6 +146,11 @@ function MetricsTag(props) {
                                         width: "400px",
                                         height: "200px"
                                     }} onChange={(e) => setDocumentation(e.target.value)} value={documentation} />
+                                    <h4>Location</h4>
+                                    <textarea type="text" style={{
+                                        width: "400px",
+                                        height: "80px"
+                                    }} onChange={(e) => setLocation(e.target.value)} value={location} />
                                     <h4>Tags</h4>
                                     <Tag uc_id={tag} />
                                 </div>)

@@ -5,10 +5,6 @@ from models.base import UserControl, Tag
 app = Flask(__name__)
 CORS(app)
 
-USER_CONTROL = "user_control"
-TAG = "tag"
-
-
 @app.route('/documentation/<id>', methods=["POST"])
 def update_user_control(id):
 
@@ -16,7 +12,8 @@ def update_user_control(id):
         where=UserControl.user_control_id == id,
         update=UserControl(
             user_control_id=id,
-            description=request.get_json().get('description'))
+            description=request.get_json().get('description'),
+            location=request.get_json().get('location'))
     )
     return uc.as_dict()
 
