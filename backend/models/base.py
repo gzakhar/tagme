@@ -129,7 +129,7 @@ class Base:
 class UserControl(Base):
     __tablename__ = "user_control"
 
-    id: int = field(default=None, metadata={ "sa": Column(Integer, primary_key=True)})
+    id: int = field(default=None, metadata={"sa": Column(Integer, primary_key=True)})
     user_control_id: int = field(default=None, metadata={"sa": Column(Integer)})
     description: str = field(default=None, metadata={"sa": Column(String)})
     location: str = field(default=None, metadata={"sa": Column(String)})
