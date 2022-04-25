@@ -97,7 +97,6 @@ function MetricsTag(props) {
     useEffect(async () => {
 
         let res = await axios.get(`http://localhost:5000/documentation/${tag}`)
-        console.log("res is:", res)
         setDocumentation(res.data["description"])
         setLocation(res.data["location"])
 
