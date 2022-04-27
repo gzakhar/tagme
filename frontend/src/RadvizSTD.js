@@ -13,7 +13,7 @@ function Radviz(props) {
 
 	useEffect(() => {
 		// #1 svg.
-		let svg = select('svg')
+		let svg = select('#svg')
 
 		svg.select('defs').remove()
 		let defs = svg.append('defs')
