@@ -132,6 +132,7 @@ class UserControl(Base):
     id: int = field(default=None, metadata={"sa": Column(Integer, primary_key=True)})
     user_control_id: int = field(default=None, metadata={"sa": Column(Integer)})
     description: str = field(default=None, metadata={"sa": Column(String)})
+    location: str = field(default=None, metadata={"sa": Column(String)})
 
 
 @mapper_registry.mapped

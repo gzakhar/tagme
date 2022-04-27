@@ -1,5 +1,5 @@
-import {BsFillInfoCircleFill} from "react-icons/bs"
-import {useEffect, useState} from "react"
+import { BsFillInfoCircleFill } from "react-icons/bs"
+import { useEffect, useState } from "react"
 import Modal from "react-modal";
 import axios from "axios";
 
@@ -20,7 +20,7 @@ function Tag(props) {
 
     async function handleCreateTag() {
 
-        await axios.post(`http://localhost:5000/tag`, {"description": newTag})
+        await axios.post(`http://localhost:5000/tag`, { "description": newTag })
         getTags()
         setNewTag("")
     }
@@ -29,7 +29,7 @@ function Tag(props) {
 
         let res = await axios.get(`http://localhost:5000/tag`)
         let tagsDict = {}
-        res.data["tags"].forEach(tag => tagsDict[tag['id']] = {'description': tag['description'], 'checked': false})
+        res.data["tags"].forEach(tag => tagsDict[tag['id']] = { 'description': tag['description'], 'checked': false })
 
         res = await axios.get(`http://localhost:5000/documentation/${props.uc_id}/tag`)
 
@@ -45,7 +45,7 @@ function Tag(props) {
 
     function handleCheckTag(id) {
 
-        let tagsDict = {...tags}
+        let tagsDict = { ...tags }
 
         if (tagsDict[id]['checked']) {
             props.tagUpdates = props.tagUpdates.filter((val) => val != id)
@@ -66,10 +66,10 @@ function Tag(props) {
             <form>
                 {
                     Object.keys(tags).map((tag, indx) => (
-                        <span style={{border: "red 2px solid", marginRight: "5px", borderRadius: "5px", key: indx}}>
+                        <span style={{ border: "red 2px solid", marginRight: "5px", borderRadius: "5px", key: indx }}>
                             <input type="checkbox" checked={tags[tag]['checked'] ? 'checked' : ''}
-                                   onChange={() => handleCheckTag(tag)}/>
-                            <p style={{display: "inline-block"}}>{tags[tag]['description']}</p>
+                                onChange={() => handleCheckTag(tag)} />
+                            <p style={{ display: "inline-block" }}>{tags[tag]['description']}</p>
                         </span>))
                 }
             </form>
@@ -77,8 +77,8 @@ function Tag(props) {
                 handleCreateTag()
                 e.preventDefault()
             }}>
-                <input type="text" onChange={(e) => setNewTag(e.target.value)} value={newTag}/>
-                <input type="submit" value="add"/>
+                <input type="text" onChange={(e) => setNewTag(e.target.value)} value={newTag} />
+                <input type="submit" value="add" />
             </form>
         </div>
     )
@@ -91,6 +91,7 @@ function UserControl(props) {
     const [modalOpen, setModalOpen] = useState(false)
     const [documentation, setDocumentation] = useState("")
     let tagUpdates = {}
+    const [location, setLocation] = useState("")
 
     let isAnotated = props.tag != null;
     let tag;
@@ -118,62 +119,68 @@ function UserControl(props) {
 
         let res = await axios.get(`http://localhost:5000/documentation/${tag}`)
         setDocumentation(res.data["description"])
+        setLocation(res.data["location"])
 
     }, [modalOpen])
 
 
     function handleSubmitModal() {
 
-        axios.post(`http://localhost:5000/documentation/${tag}`, {description: documentation}, {headers: {"Content-Type": "application/json"}})
+        axios.post(`http://localhost:5000/documentation/${tag}`, { description: documentation, location: location }, { headers: { "Content-Type": "application/json" } })
         handleCloseModal()
     }
 
     function handleCloseModal() {
         setDocumentation("")
         setModalOpen("")
+        setLocation("")
     }
 
 
-    let styleTag = isAnotated ? {cursor: "pointer", color: "green"} : {cursor: "pointer", color: "red"}
+    let styleTag = isAnotated ? { cursor: "pointer", color: "green" } : { cursor: "pointer", color: "red" }
 
     return (
-        <div style={{display: "flex"}}>
+        <div style={{ display: "flex" }}>
             {props.children}
 
-
             {DEVELOPMENT &&
-            <>
-                <BsFillInfoCircleFill style={styleTag} onClick={() => setModalOpen(true)}/>
+                <>
+                    <BsFillInfoCircleFill style={styleTag} onClick={() => setModalOpen(true)} />
 
-                <Modal
-                    isOpen={modalOpen}
-                    style={customStyles}
-                >
-                    <div style={{display: "flex", flexDirection: "column"}}>
+                    <Modal
+                        isOpen={modalOpen}
+                        style={customStyles}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
 
-                        <div style={{flexDirection: "row"}}>
-                            {isAnotated ? <div>id #{props.tag}</div> : <div>{`Sign with tag={${tag}}`}</div>}
+                            <div style={{ flexDirection: "row" }}>
+                                {isAnotated ? <div>id #{props.tag}</div> : <div>{`Sign with tag={${tag}}`}</div>}
+
+                            </div>
+
+                            {isAnotated &&
+                                (<div>
+                                    <h4>Description</h4>
+                                    <textarea type="text" style={{
+                                        width: "400px",
+                                        height: "200px"
+                                    }} onChange={(e) => setDocumentation(e.target.value)} value={documentation} />
+                                    <h4>Location</h4>
+                                    <textarea type="text" style={{
+                                        width: "400px",
+                                        height: "80px"
+                                    }} onChange={(e) => setLocation(e.target.value)} value={location} />
+                                    <h4>Tags</h4>
+                                    <Tag uc_id={tag} tagUpdates={tagUpdates} />
+                                </div>)
+                            }
+                            <div style={{ margin: "10px" }} />
+                            {isAnotated && <button onClick={() => handleSubmitModal()}>Submit</button>}
+                            <button onClick={() => handleCloseModal()}>Close</button>
 
                         </div>
-
-                        {isAnotated &&
-                        (<div>
-                            <h4>Description</h4>
-                            <textarea type="text" style={{
-                                width: "400px",
-                                height: "200px"
-                            }} onChange={(e) => setDocumentation(e.target.value)} value={documentation}/>
-                            <h4>Tags</h4>
-                            <Tag uc_id={tag} tagUpdates={tagUpdates}/>
-                        </div>)
-                        }
-                        <div style={{margin: "10px"}}/>
-                        {isAnotated && <button onClick={() => handleSubmitModal()}>Submit</button>}
-                        <button onClick={() => handleCloseModal()}>Close</button>
-
-                    </div>
-                </Modal>
-            </>
+                    </Modal>
+                </>
             }
         </div>
     )
