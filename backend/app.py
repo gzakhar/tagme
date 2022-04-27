@@ -1,11 +1,13 @@
 from flask import Flask, request
 from flask_cors import CORS
 from models.base import UserControl, Tag, UserControlTag
+import sqlalchemy as sa
 import logging
 
 app = Flask(__name__)
 CORS(app)
 LOGGER = logging.getLogger(__name__)
+
 
 @app.route('/documentation/<id>', methods=["POST"])
 def update_user_control(id):
@@ -51,6 +53,17 @@ def tagUserControl(id):
         result.append(t.as_dict())
 
     return {"added_tags": result}
+
+
+@app.route('/documentation/<id>/tag', methods=["PATCH"])
+def tagUserControlDelete(id):
+    result = 0
+    for tag in request.get_json().get("tags"):
+        deleted = UserControlTag.delete(
+            where=sa.and_(UserControlTag.user_control_id == id, UserControlTag.tag_id == tag))
+        result += len(deleted)
+
+    return {"deleted_tags": result}
 
 
 @app.route('/documentation/<id>/tag', methods=["GET"])

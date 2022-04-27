@@ -184,7 +184,7 @@ export default function App() {
                             onChange={(e) => setSelectedState(e.target.value)}>
                         {states.map((state, id) => <option value={id}> {state.name}</option>)}
                     </select>
-                    {/*<MetricsTag/>*/}
+                    <MetricsTag tag={4}/>
                     {useMemo(() =>
                         <Radviz
                             points={data.points}
@@ -207,12 +207,16 @@ export default function App() {
                             </div>
                             <div>
                                 <div style={{color: 'white'}}>1-2</div>
-                                <input type="checkbox" checked={one2two} onChange={() => setOne2two(!one2two)}/>
+                                <MetricsTag tag={2}>
+                                    <input type="checkbox" checked={one2two} onChange={() => setOne2two(!one2two)}/>
+                                </MetricsTag>
                             </div>
                             <div>
                                 <div style={{color: 'white'}}>2-3</div>
-                                <input type="checkbox" checked={two2three}
-                                       onChange={() => setTwo2three(!two2three)}/>
+                                <MetricsTag tag={3}>
+                                    <input type="checkbox" checked={two2three}
+                                           onChange={() => setTwo2three(!two2three)}/>
+                                </MetricsTag>
                             </div>
                             <div>
                                 <div style={{color: 'white'}}>3-inf</div>
