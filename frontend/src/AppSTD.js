@@ -5,13 +5,11 @@ import {GeoJsonLayer} from '@deck.gl/layers';
 import axios from 'axios';
 import RawPositioning from './RawPositioningMuellerVizSTD.js'
 import Radviz from './RadvizSTD.js'
-// import RawPositioning from './RawPositioningDynamicLabels';
-// import { radvizMapper as RawPositioning, Radviz } from 'react-d3-radviz'
-// import Radviz from './Radviz.js'
 import {Range} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import HSLToRGB from './ColorConversion.js';
 import MetricsTag from './metrics.js';
+// import MetricsTag from 'react-tagme';
 
 let rad2deg = rad => rad * 180 / Math.PI;
 
@@ -179,14 +177,14 @@ export default function App() {
         <div>
             <div style={{width: '30%', height: '100%', position: 'fixed', padding: '5px'}}>
                 <div id='sidebar'>
-
+                    <MetricsTag tag={1} />
                     <select name="stat" id="cars" className="btn btn-secondary dropdown-toggle" defaultValue={0}
                             onChange={(e) => setSelectedState(e.target.value)}>
                         {states.map((state, id) => <option value={id}> {state.name}</option>)}
                     </select>
-                    <MetricsTag tag={4}/>
                     {useMemo(() =>
-                        <Radviz
+                        <MetricsTag tag={2}>
+                            <Radviz
                             points={data.points}
                             labels={data.labels}
                             hoverId={hoverCounty}
@@ -195,28 +193,31 @@ export default function App() {
                             std2={data.std2}
                             std3={data.std3}
                             shade={{'z2one': z2one, 'one2two': one2two, 'two2three': two2three, 'three2inf': three2inf}}
-                            showHSV={true}/>, [data, hoverCounty, selectedState])}
+                            showHSV={true}/>
+
+                        </MetricsTag>
+                        , [data, hoverCounty, selectedState])}
                     <div>
                         <div className='d-flex justify-content-around align-items-center'
                              style={{width: '80%', marginLeft: '50px', marginRight: '50px'}}>
                             <div>
                                 <div style={{color: 'white'}}>0-1</div>
-                                <MetricsTag tag={1}>
+                                {/* <MetricsTag tag={3}> */}
                                     <input type="checkbox" checked={z2one} onChange={() => setZ2one(!z2one)}/>
-                                </MetricsTag>
+                                {/* </MetricsTag> */}
                             </div>
                             <div>
                                 <div style={{color: 'white'}}>1-2</div>
-                                <MetricsTag tag={2}>
+                                {/* <MetricsTag tag={5}> */}
                                     <input type="checkbox" checked={one2two} onChange={() => setOne2two(!one2two)}/>
-                                </MetricsTag>
+                                {/* </MetricsTag> */}
                             </div>
                             <div>
                                 <div style={{color: 'white'}}>2-3</div>
-                                <MetricsTag tag={3}>
+                                {/* <MetricsTag tag={6}> */}
                                     <input type="checkbox" checked={two2three}
                                            onChange={() => setTwo2three(!two2three)}/>
-                                </MetricsTag>
+                                {/* </MetricsTag> */}
                             </div>
                             <div>
                                 <div style={{color: 'white'}}>3-inf</div>
@@ -229,9 +230,11 @@ export default function App() {
                                     <span className='control-labels'>Standard Deviation</span>
 
                                 </div>
-
-                                <Range id={'std'} defaultValue={[100, 200, 300]} min={0} max={600} allowCross={false}
-                                       onChange={(v) => setRangeValue(v)} pushable={5}/>
+                                {/* <MetricsTag tag={4}> */}
+                                    <Range id={'std'} defaultValue={[100, 200, 300]} min={0} max={600}
+                                           allowCross={false}
+                                           onChange={(v) => setRangeValue(v)} pushable={5}/>
+                                {/* </MetricsTag> */}
                             </div>
                         </div>
 
@@ -262,6 +265,7 @@ export default function App() {
                                 </div>
                             </div>
                         )}
+
                     </div>
                 </div>
             </div>

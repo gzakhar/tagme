@@ -24,14 +24,14 @@
     "rc-slider": "^9.7.2",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.1",
-    "react-bootstrap-range-slider": "^2.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
     "react-map-gl": "^6.1.16",
-    "react-modal": "^3.14.4",
+    "react-modal": "^3.15.1",
     "react-plotly.js": "^2.5.1",
-    "react-scripts": "4.0.2",
-    "web-vitals": "^1.0.1"
+    "react-scripts": "5.0.1",
+    "react-tagme": "^0.1.2",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
