@@ -1,15 +1,15 @@
-import React, {useEffect, useState, useMemo} from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import DeckGL from '@deck.gl/react';
-import {StaticMap} from 'react-map-gl';
-import {GeoJsonLayer} from '@deck.gl/layers';
+import { StaticMap } from 'react-map-gl';
+import { GeoJsonLayer } from '@deck.gl/layers';
 import axios from 'axios';
 import RawPositioning from './RawPositioningMuellerVizSTD.js'
 import Radviz from './RadvizSTD.js'
-import {Range} from 'rc-slider';
+import { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import HSLToRGB from './ColorConversion.js';
-import MetricsTag from './metrics.js';
-// import MetricsTag from 'react-tagme';
+// import MetricsTag from "./metrics"
+import MetricsTag from 'react-tagme'
 
 let rad2deg = rad => rad * 180 / Math.PI;
 
@@ -66,9 +66,9 @@ export default function App() {
     let isHovering = false
 
     let labelMappingMueller = {
-        "white_ratio": {high: 'white', low: 'non-white'},
-        "age_median": {high: 'old', low: 'young'},
-        "income_per_capita": {high: 'rich', low: 'poor'},
+        "white_ratio": { high: 'white', low: 'non-white' },
+        "age_median": { high: 'old', low: 'young' },
+        "income_per_capita": { high: 'rich', low: 'poor' },
     }
 
 
@@ -87,7 +87,7 @@ export default function App() {
             std2,
             std3
         } = RawPositioning(rawData, labelMappingMueller, labelAngles, rangeValue[0], rangeValue[1], rangeValue[2], 'county_name', true)
-        setData({points, labels, std, std2, std3})
+        setData({ points, labels, std, std2, std3 })
 
         let countyColorMap = {}
         points.forEach((county) => {
@@ -158,7 +158,7 @@ export default function App() {
                 getFillColor: d => getCountyColor(d),
                 getLineColor: [255, 255, 255],
                 getLineWidth: 1,
-                updateTriggers: {getFillColor: [getCountyColor], getLineColor: hoverCounty},
+                updateTriggers: { getFillColor: [getCountyColor], getLineColor: hoverCounty },
                 onHover: d => {
                     d.picked ? setHoverCounty(d.layer.id) : setHoverCounty(-1)
                     isHovering = d.picked ? true : false
@@ -175,86 +175,86 @@ export default function App() {
 
     return (
         <div>
-            <div style={{width: '30%', height: '100%', position: 'fixed', padding: '5px'}}>
+            <div style={{ width: '30%', height: '100%', position: 'fixed', padding: '5px' }}>
                 <div id='sidebar'>
-                    <MetricsTag tag={1} />
-                    <select name="stat" id="cars" className="btn btn-secondary dropdown-toggle" defaultValue={0}
+                    <MetricsTag tag={1} >
+                        <select name="stat" id="cars" className="btn btn-secondary dropdown-toggle" defaultValue={0}
                             onChange={(e) => setSelectedState(e.target.value)}>
-                        {states.map((state, id) => <option value={id}> {state.name}</option>)}
-                    </select>
+                            {states.map((state, id) => <option value={id}> {state.name}</option>)}
+                        </select>
+                    </MetricsTag>
                     {useMemo(() =>
                         <MetricsTag tag={2}>
                             <Radviz
-                            points={data.points}
-                            labels={data.labels}
-                            hoverId={hoverCounty}
-                            hoverOver={setHoverCounty}
-                            std1={data.std}
-                            std2={data.std2}
-                            std3={data.std3}
-                            shade={{'z2one': z2one, 'one2two': one2two, 'two2three': two2three, 'three2inf': three2inf}}
-                            showHSV={true}/>
+                                points={data.points}
+                                labels={data.labels}
+                                hoverId={hoverCounty}
+                                hoverOver={setHoverCounty}
+                                std1={data.std}
+                                std2={data.std2}
+                                std3={data.std3}
+                                shade={{ 'z2one': z2one, 'one2two': one2two, 'two2three': two2three, 'three2inf': three2inf }}
+                                showHSV={true} />
 
                         </MetricsTag>
                         , [data, hoverCounty, selectedState])}
                     <div>
                         <div className='d-flex justify-content-around align-items-center'
-                             style={{width: '80%', marginLeft: '50px', marginRight: '50px'}}>
+                            style={{ width: '80%', marginLeft: '50px', marginRight: '50px' }}>
                             <div>
-                                <div style={{color: 'white'}}>0-1</div>
-                                {/* <MetricsTag tag={3}> */}
-                                    <input type="checkbox" checked={z2one} onChange={() => setZ2one(!z2one)}/>
-                                {/* </MetricsTag> */}
+                                <div style={{ color: 'white' }}>0-1</div>
+                                <MetricsTag tag={3} />
+                                <input type="checkbox" checked={z2one} onChange={() => setZ2one(!z2one)} />
                             </div>
                             <div>
-                                <div style={{color: 'white'}}>1-2</div>
+                                <div style={{ color: 'white' }}>1-2</div>
                                 {/* <MetricsTag tag={5}> */}
-                                    <input type="checkbox" checked={one2two} onChange={() => setOne2two(!one2two)}/>
+                                <input type="checkbox" checked={one2two} onChange={() => setOne2two(!one2two)} />
                                 {/* </MetricsTag> */}
                             </div>
                             <div>
-                                <div style={{color: 'white'}}>2-3</div>
+                                <div style={{ color: 'white' }}>2-3</div>
                                 {/* <MetricsTag tag={6}> */}
-                                    <input type="checkbox" checked={two2three}
-                                           onChange={() => setTwo2three(!two2three)}/>
+                                <input type="checkbox" checked={two2three}
+                                    onChange={() => setTwo2three(!two2three)} />
                                 {/* </MetricsTag> */}
                             </div>
                             <div>
-                                <div style={{color: 'white'}}>3-inf</div>
-                                <input type="checkbox" checked={three2inf} onChange={() => setThree2inf(!three2inf)}/>
+                                <div style={{ color: 'white' }}>3-inf</div>
+                                <input type="checkbox" checked={three2inf} onChange={() => setThree2inf(!three2inf)} />
                             </div>
                         </div>
                         <div className="d-flex justify-content-center my-4">
-                            <div style={{width: '75%'}}>
+                            <div style={{ width: '75%' }}>
                                 <div className='d-flex align-items-center justify-content-between'>
                                     <span className='control-labels'>Standard Deviation</span>
 
                                 </div>
                                 {/* <MetricsTag tag={4}> */}
-                                    <Range id={'std'} defaultValue={[100, 200, 300]} min={0} max={600}
-                                           allowCross={false}
-                                           onChange={(v) => setRangeValue(v)} pushable={5}/>
+                                <Range id={'std'} defaultValue={[100, 200, 300]} min={0} max={600}
+                                    allowCross={false}
+                                    onChange={(v) => setRangeValue(v)} pushable={5} />
                                 {/* </MetricsTag> */}
                             </div>
                         </div>
 
                         {Object.keys(labelAngles).map(d =>
                             <div className="d-flex justify-content-center my-4 control-container">
-                                <div style={{width: '85%'}}>
+                                <div style={{ width: '85%' }}>
                                     <div className='d-flex align-items-center justify-content-between'>
                                         <span
                                             className='control-labels'>{(d.replaceAll('_', ' ')).toLocaleUpperCase()}</span>
                                         <span htmlFor={d}
-                                              className='control-value'
-                                              style={{width: '10px'}}>{labelAngles[d]}º</span>
+                                            className='control-value'
+                                            style={{ width: '10px' }}>{labelAngles[d]}º</span>
                                     </div>
                                     <input type="range" className="custom-range" min="0" max="360"
-                                           id={d}
-                                           value={labelAngles[d]}
-                                           onChange={(e) => {
-                                               let updatedState = {...labelAngles, [d]: e.target.value}
-                                               setLabelAngles(updatedState)
-                                           }}/>
+                                        id={d}
+                                        value={labelAngles[d]}
+                                        onChange={(e) => {
+                                            let updatedState = { ...labelAngles, [d]: e.target.value }
+                                            setLabelAngles(updatedState)
+                                        }} />
                                     <div className="ticks">
                                         <span className="tick">0º</span>
                                         <span className="tick">90º</span>
@@ -276,7 +276,7 @@ export default function App() {
                     layers={[countyLayer]}
                     getCursor={() => (isHovering ? "pointer" : "grab")}
                 >
-                    <StaticMap mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}/>
+                    <StaticMap mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN} />
                 </DeckGL>
             </div>
         </div>

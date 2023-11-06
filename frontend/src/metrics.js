@@ -1,11 +1,14 @@
-import {BsFillInfoCircleFill} from "react-icons/bs"
-import {useEffect, useState} from "react"
+import { BsFillInfoCircleFill } from "react-icons/bs"
+import { useEffect, useState } from "react"
 import Modal from "react-modal";
 import axios from "axios";
 
 const repo = []
 
-const DEVELOPMENT = true
+const EDITABLE = ["true", "t", 1].includes(process.env.REACT_APP_TOOLTIP_EDIT.toLocaleLowerCase())
+const VISIBLE = ["true", "t", 1].includes(process.env.REACT_APP_TOOLTIP_VISIBLE.toLocaleLowerCase())
+const TOOLTIP_BASE_URL = process.env.REACT_APP_TOOLTIP_BASE_URL || "http://localhost:5000"
+
 
 function Tag(props) {
 
@@ -19,7 +22,7 @@ function Tag(props) {
 
     async function handleCreateTag() {
 
-        await axios.post(`http://localhost:5000/tag`, {"description": newTag})
+        await axios.post(`${TOOLTIP_BASE_URL}/tag`, { "description": newTag })
         getTags()
         setNewTag("")
     }
@@ -28,16 +31,16 @@ function Tag(props) {
 
         let o = {}
         // Get all tags.
-        let res = await axios.get(`http://localhost:5000/tag`)
-        res.data["tags"].forEach(tag => o[tag['id']] = {'description': tag['description'], 'checked': false})
+        let res = await axios.get(`${TOOLTIP_BASE_URL}/tag`)
+        res.data["tags"].forEach(tag => o[tag['id']] = { 'description': tag['description'], 'checked': false })
 
         // Get checked tags.
-        res = await axios.get(`http://localhost:5000/documentation/${props.uc_id}/tag`)
+        res = await axios.get(`${TOOLTIP_BASE_URL}/documentation/${props.uc_id}/tag`)
         for (let tag of res.data['tags'])
             o[tag['tag_id']]['checked'] = true
 
         setTags(o)
-        setOriginalTags({...o})
+        setOriginalTags({ ...o })
     }
 
     function getUpdates(newTags) {
@@ -52,7 +55,7 @@ function Tag(props) {
 
     function handleTagClick(tagId) {
         let n = {}
-        for (let tag in tags) n[tag] = {...tags[tag]}
+        for (let tag in tags) n[tag] = { ...tags[tag] }
         n[tagId]['checked'] = !n[tagId]['checked']
         setTags(n)
         props.setUpdates(getUpdates(n))
@@ -65,19 +68,19 @@ function Tag(props) {
             <form>
                 {
                     Object.keys(tags).map((tag, indx) => (
-                        <span style={{border: "1px solid", marginRight: "5px", borderRadius: "2px", key: indx}}>
-                            <input type="checkbox" checked={tags[tag]['checked'] ? 'checked' : ''}
-                                   onClick={(e) => handleTagClick(tag)}/>
-                            <p style={{display: "inline-block"}}>{tags[tag]['description']}</p>
+                        <span style={{ border: "1px solid", marginRight: "5px", borderRadius: "2px", key: indx }}>
+                            <input type="checkbox" disabled={!EDITABLE} checked={tags[tag]['checked'] ? 'checked' : ''}
+                                onClick={(e) => handleTagClick(tag)} />
+                            <p style={{ display: "inline-block" }}>{tags[tag]['description']}</p>
                         </span>))
                 }
             </form>
-            < form onSubmit={(e) => {
+            <form onSubmit={(e) => {
                 handleCreateTag()
                 e.preventDefault()
             }}>
-                <input type="text" onChange={(e) => setNewTag(e.target.value)} value={newTag}/>
-                <input type="submit" value="add"/>
+                <input type="text" onChange={(e) => setNewTag(e.target.value)} value={newTag} disabled={!EDITABLE} />
+                <input type="submit" value="add" disabled={!EDITABLE} />
             </form>
         </div>
     )
@@ -114,21 +117,21 @@ function UserControl(props) {
     }
 
     useEffect(async () => {
-        let res = await axios.get(`http://localhost:5000/documentation/${tag}`)
+        let res = await axios.get(`${TOOLTIP_BASE_URL}/documentation/${tag}`)
         setDocumentation(res.data["description"])
         setLocation(res.data["location"])
     }, [modalOpen])
 
     function handleSubmitModal() {
-        axios.post(`http://localhost:5000/documentation/${tag}`, {
+        axios.post(`${TOOLTIP_BASE_URL}/documentation/${tag}`, {
             description: documentation,
             location: location
-        }, {headers: {"Content-Type": "application/json"}})
+        }, { headers: { "Content-Type": "application/json" } })
 
-        axios.post(`http://localhost:5000/documentation/${tag}/tag`, {
+        axios.post(`${TOOLTIP_BASE_URL}/documentation/${tag}/tag`, {
             tags: Object.entries(tagUpdates).filter(e => e[1] === true).map(e => e[0])
         })
-        axios.patch(`http://localhost:5000/documentation/${tag}/tag`, {
+        axios.patch(`${TOOLTIP_BASE_URL}/documentation/${tag}/tag`, {
             tags: Object.entries(tagUpdates).filter(e => e[1] === false).map(e => e[0])
         })
         handleCloseModal()
@@ -140,47 +143,60 @@ function UserControl(props) {
         setModalOpen(false)
     }
 
+
+    function childrenDisplay() {
+        if (props.children) {
+            return (props.children)
+        } else if (!VISIBLE) {
+            return <BsFillInfoCircleFill />
+        }
+    }
+
     return (
-        <div style={{display: "flex"}}>
-            {props.children}
+        <div style={{ display: "flex" }} title={documentation}>
+            {childrenDisplay()}
 
-            {DEVELOPMENT &&
-            <>
-                <BsFillInfoCircleFill style={{cursor: "pointer", color: isAnnotated ? "green" : "red"}}
-                                      onClick={() => setModalOpen(true)}/>
+            {VISIBLE &&
+                <>
+                    <BsFillInfoCircleFill style={{ cursor: "pointer", color: isAnnotated ? "green" : "red" }}
+                        onClick={() => setModalOpen(true)} />
 
-                <Modal
-                    isOpen={modalOpen}
-                    style={customStyles}
-                >
-                    <div style={{display: "flex", flexDirection: "column"}}>
+                    <Modal
+                        isOpen={modalOpen}
+                        style={customStyles}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
 
-                        <div style={{flexDirection: "row"}}>
-                            {isAnnotated ? <div>id #{props.tag}</div> : <div>{`Sign with tag={${tag}}`}</div>}
+                            <div style={{ flexDirection: "row" }}>
+                                {isAnnotated ? <div>id #{props.tag}</div> : <div>{`Sign with tag={${tag}}`}</div>}
+                            </div>
+                            {isAnnotated &&
+                                (<div>
+                                    <h4>Description</h4>
+                                    <textarea type="text"
+                                        disabled={!EDITABLE}
+                                        style={{
+                                            width: "400px",
+                                            height: "200px"
+                                        }} onChange={(e) => setDocumentation(e.target.value)} value={documentation} />
+                                    <h4>Location</h4>
+                                    <textarea type="text"
+                                        disabled={!EDITABLE}
+                                        style={{
+                                            width: "400px",
+                                            height: "80px"
+                                        }} onChange={(e) => setLocation(e.target.value)} value={location} />
+                                    <h4>Tags</h4>
+                                    <Tag uc_id={tag} setUpdates={setTagUpdates} />
+                                </div>)
+                            }
+                            <div style={{ margin: "10px" }} />
+                            {isAnnotated && EDITABLE && <button onClick={() => handleSubmitModal()}>Submit</button>}
+                            <button onClick={() => handleCloseModal()}>Close</button>
+
                         </div>
-                        {isAnnotated &&
-                        (<div>
-                            <h4>Description</h4>
-                            <textarea type="text" style={{
-                                width: "400px",
-                                height: "200px"
-                            }} onChange={(e) => setDocumentation(e.target.value)} value={documentation}/>
-                            <h4>Location</h4>
-                            <textarea type="text" style={{
-                                width: "400px",
-                                height: "80px"
-                            }} onChange={(e) => setLocation(e.target.value)} value={location}/>
-                            <h4>Tags</h4>
-                            <Tag uc_id={tag} setUpdates={setTagUpdates}/>
-                        </div>)
-                        }
-                        <div style={{margin: "10px"}}/>
-                        {isAnnotated && <button onClick={() => handleSubmitModal()}>Submit</button>}
-                        <button onClick={() => handleCloseModal()}>Close</button>
-
-                    </div>
-                </Modal>
-            </>
+                    </Modal>
+                </>
             }
         </div>
     )
